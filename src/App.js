@@ -18,13 +18,34 @@ class Start extends React.Component {
     super(props);
     this.inputRef = React.createRef();
     this.handleChange = this.handleChange.bind(this);
+    this.handleEnterShuffle = this.handleEnterShuffle.bind(this);
+    this.handleEnterClear = this.handleEnterClear.bind(this);
+    this.handleEnterStart = this.handleEnterStart.bind(this);
   }
 
-  handleChange(e) {
+  handleChange(e) { 
     this.setState({
       cursorPos: e.target.selectionEnd,
     })
     this.props.onChangeFun(e.target);
+  }
+
+  handleEnterShuffle(e) {
+    if (e.key === "Enter") {
+      this.props.handleShuffleFun();
+    }
+  }
+
+  handleEnterClear(e) {
+    if (e.key === "Enter") {
+      this.props.handleClearFun();
+    }
+  }
+
+  handleEnterStart(e) {
+    if (e.key === "Enter") {
+      this.props.handleStartFun();
+    }
   }
 
   componentDidUpdate() {
@@ -52,9 +73,9 @@ class Start extends React.Component {
           </textarea>
         </div>
         <div id="control-buttons">
-          <button id="shuffle" onMouseUp={this.props.handleShuffleFun}>Shuffle</button>
-          <button id="clear" onMouseUp={this.props.handleClearFun}>Clear</button>
-          <button id="Start" onMouseUp={this.props.handleStartFun}>Start!</button>  
+          <button id="shuffle" onMouseUp={this.props.handleShuffleFun} onKeyUp={this.handleEnterShuffle}>Shuffle</button>
+          <button id="clear" onMouseUp={this.props.handleClearFun} onKeyUp={this.handleEnterClear}>Clear</button>
+          <button id="Start" onMouseUp={this.props.handleStartFun} onKeyUp={this.handleEnterStart}>Start!</button>  
         </div>
       </div>
     );
