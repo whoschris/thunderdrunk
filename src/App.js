@@ -16,9 +16,6 @@ class Start extends React.Component {
   //TODO: add line numbers to textarea
   constructor(props){
     super(props);
-    this.state = {
-      cursorPos: 0,
-    }
     this.inputRef = React.createRef();
     this.handleChange = this.handleChange.bind(this);
   }
@@ -27,11 +24,11 @@ class Start extends React.Component {
     this.setState({
       cursorPos: e.target.selectionEnd,
     })
-    this.props.onChangeFun(e.target.value);
+    this.props.onChangeFun(e.target);
   }
 
   componentDidUpdate() {
-    this.inputRef.current.selectionEnd = this.state.cursorPos;
+    this.inputRef.current.selectionEnd = this.props.cursorPos;
   }
 
   render(){
@@ -155,6 +152,7 @@ class App extends React.Component {
     this.state = {
       players: [],
       start: true,
+      cursorPos: 0,
     };
     // this.state = { //FOR DEBUGGING
     //   players: ["pelf", "chris", "riedel"],
@@ -163,9 +161,11 @@ class App extends React.Component {
     this.handleNewChar = this.handleNewChar.bind(this);
   }
 
-  handleNewChar(value){
-    const tmp = value.split("\n").map((str, i) => {
+  handleNewChar(target){
+    let curPosNew = target.selectionEnd;
+    const tmp = target.value.split("\n").map((str, i) => {
       if (str.length > MAX_NAME_LENGTH){
+        curPosNew = curPosNew - 1;
         return this.state.players[i];
       }
       return str;
@@ -173,6 +173,7 @@ class App extends React.Component {
 
     this.setState({
       players: tmp,
+      cursorPos: curPosNew,
      });
   }
 
@@ -194,6 +195,7 @@ class App extends React.Component {
   handleClear() {
     this.setState({
       players: [],
+      cursorPos: 0,
     });
   }
 
@@ -220,6 +222,7 @@ class App extends React.Component {
       return(
         <Start 
           players={this.state.players} 
+          cursorPos={this.state.cursorPos}
           onChangeFun={this.handleNewChar}
           handleShuffleFun={() => this.handleShuffle()}
           handleClearFun={() => this.handleClear()}
