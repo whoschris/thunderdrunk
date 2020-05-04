@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
-//import './App.css';
+import './App.css';
 import { OFFSET, MAX_NAME_LENGTH } from './constants';
 import { THUNDER } from './constants';
 
@@ -84,80 +84,116 @@ class Start extends React.Component {
 
 function Player(props){
   if (props.drinking){
-    return <li><strong>{props.name}</strong></li>;
+    return <p className="lineup-elt"><strong>{props.name}</strong></p>;
   }
-  return <li>{props.name}</li>;
+  return <p className="lineup-elt">{props.name}</p>;
+}
+
+function Lineup(props) {
+  const lineup = props.players.map((name ,index) => {
+    if (props.drinkingIndex === index) {
+      return <Player name={name} drinking={true} key={index}/>;
+    }
+    else {
+      return <Player name={name} drinking={false} key={index}/>;
+    }
+  });
+  return lineup;
 }
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    const lineup = props.players.map((name ,index) => {
-      return <Player name={name} drinking={false} key={index}/>;
-    });
 
     this.state = {
-      lineup: lineup,
       count: 0,
-      numPlayers: lineup.length,
+      numPlayers: props.players.length,
+      ended: false
     }
 
     this.handleProgress = this.handleProgress.bind(this);
+    this.handleEnded = this.handleEnded.bind(this);
   }
 
   handleProgress(prog) {
     //console.log(prog.playedSeconds);
     if ((prog.playedSeconds+OFFSET) >= THUNDER[this.state.count]){
+
       this.setState({
         count: this.state.count+1,
       })
     }
   }
 
+  handleEnded(e) {
+    this.setState({
+      ended: true,
+    })
+  }
+
   render(){
-    //TODO: restart/go back button
     let currentDrinker = "";
     let onDeck = " is on deck"
-    if (this.state.count === 0) {
-      currentDrinker = "waiting...";
-      onDeck = this.props.players[0] + onDeck;
+    let drinkingIndex = -1;
+
+    if (this.state.ended) {
+      currentDrinker = "Finished!"
+      onDeck = "";
     }
     else {
-      currentDrinker = this.props.players[(this.state.count-1) % this.state.numPlayers]
-        + ", drink!";
-      onDeck = this.props.players[this.state.count % this.state.numPlayers] + onDeck
+      if (this.state.count === 0) {
+        currentDrinker = "waiting...";
+        onDeck = this.props.players[0] + onDeck;
+      }
+      else {
+        drinkingIndex = (this.state.count-1) % this.state.numPlayers;
+        currentDrinker = this.props.players[drinkingIndex]
+          + ", drink!";
+
+        if (this.state.count < THUNDER.length){
+          onDeck = this.props.players[this.state.count % this.state.numPlayers] + onDeck;
+        }
+        else {
+          onDeck = "";
+        }
+      }
+  
     }
 
-    //TODO Fix table width
     return(
       <div>
-        <table style={{width: 1000}} align="center">
+        <table className="main-table" align="center">
           <tbody>
             <tr>
-              <td rowSpan="2">
-                <button id="back" onMouseUp={this.props.handleRestartFun}>Restart</button> 
+              <td className="vid-cell" rowSpan="3">
                 <ReactPlayer 
                   url="https://www.youtube.com/watch?v=v2AC41dglnM"
                   progressInterval={10} 
+                  volume={1}
+                  width={640}
+                  height={480}
                   onProgress={this.handleProgress}
+                  onEnded={this.handleEnded}
                   config={{
                     youtube: {
                       playerVars: { diablekb: 1}
                     }
                   }}
                 />
+                <button id="back" onMouseUp={this.props.handleRestartFun}>Restart</button>
               </td>
-              <td>
-                <p id="drinking-player" style={{fontSize: 50, fontWeight: "bold", marginBottom: "10px"}}>{currentDrinker}</p>
-                <p id="on-deck-player" style={{fontSize: 30, marginTop: "0px"}}>{onDeck}</p>
+              <td className="current-cell">
+                <p className="drinking-player">{currentDrinker}</p>
+                <p className="on-deck-player">{onDeck}</p>
               </td>
             </tr>
             <tr>
-              <td>
-                <p>Lineup:</p>
-                <ul style={{listStyleType: "none"}}>
-                  {this.state.lineup}
-                </ul>
+              <td className="lineup-cell">
+                <p className="lineup-header">Lineup</p>
+                  <Lineup 
+                    players={this.props.players}
+                    drinkingIndex={drinkingIndex}
+                  />
               </td>
             </tr>
           </tbody>
@@ -170,15 +206,15 @@ class Game extends React.Component {
 class App extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      players: [],
-      start: true,
-      cursorPos: 0,
-    };
-    // this.state = { //FOR DEBUGGING
-    //   players: ["pelf", "chris", "riedel"],
-    //   start: false,
+    // this.state = {
+    //   players: [],
+    //   start: true,
+    //   cursorPos: 0,
     // };
+    this.state = { //FOR DEBUGGING
+      players: ["pelf", "chris", "riedel"],
+      start: false,
+    };
     this.handleNewChar = this.handleNewChar.bind(this);
   }
 
