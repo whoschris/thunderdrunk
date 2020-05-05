@@ -159,7 +159,7 @@ class Game extends React.Component {
       }
   
     }
-
+    //TODO: auto shrink font size for 
     return(
       <div>
         <table className="main-table" align="center">
@@ -176,7 +176,7 @@ class Game extends React.Component {
                   onEnded={this.handleEnded}
                   config={{
                     youtube: {
-                      playerVars: { diablekb: 1}
+                      playerVars: { diablekb: 1, playsinlinee: 1}
                     }
                   }}
                 />
@@ -206,14 +206,10 @@ class Game extends React.Component {
 class App extends React.Component {
   constructor(props){
     super(props);
-    // this.state = {
-    //   players: [],
-    //   start: true,
-    //   cursorPos: 0,
-    // };
-    this.state = { //FOR DEBUGGING
-      players: ["pelf", "chris", "riedel"],
-      start: false,
+    this.state = {
+      players: [],
+      start: true,
+      cursorPos: 0,
     };
     this.handleNewChar = this.handleNewChar.bind(this);
   }
