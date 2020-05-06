@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+# video editor reports video time in mm:ss:[frame count]. This script
+# converts it to seconds. 
+
 with open("times_mmssff.txt") as file:
     lines = file.read().splitlines()[1:]
 

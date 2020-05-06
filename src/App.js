@@ -116,11 +116,10 @@ class Game extends React.Component {
   }
 
   handleProgress(prog) {
-    //console.log(prog.playedSeconds);
     if ((prog.playedSeconds+OFFSET) >= THUNDER[this.state.count]){
 
       this.setState({
-        count: this.state.count+1,
+        count: this.state.count + 1,
       })
     }
   }

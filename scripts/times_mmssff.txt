@@ -1,4 +1,4 @@
-mm:ss:frame# (30fps), line28 is a long "thunder" that has very short time to the next one
+mm:ss:frame# (30fps)
 0:29:08
 0:32:26
 0:36:16
